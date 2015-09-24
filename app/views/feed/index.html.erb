@@ -1,2 +1,8 @@
 <h1>Feed#index</h1>
-<p>Find me in app/views/feed/index.html.erb</p>
+
+<% @feeds.each do |feed| %>
+	<p><%= feed.title %></p>
+	<p><%= feed.url %></p>
+	<p><%= feed.desc %></p>
+	<p><%= feed.created_at %></p>
+<% end %>
