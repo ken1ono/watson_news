@@ -6,7 +6,7 @@ xml.rss("version" => "2.0", "xmlns:dc" => "http://purl.org/dc/elements/1.1/") do
     @feeds.each do |feed|
       xml.item do
         xml.title feed.title
-        xml.description feed.content
+        xml.description feed.desc
 #        xml.pubDate post.created_at.in_time_zone(@user.time_zone).to_s(:rfc822)
 #        xml.guid "http://example.com/posts/#{post.id}"
         xml.link feed.url
