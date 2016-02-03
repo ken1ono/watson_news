@@ -14,6 +14,7 @@ class FeedController < ApplicationController
         else raise("Invalid Lang parameter given")
         end
 
+      @lang = params["lang"]
       respond_to do |format|
         format.html
         format.rss

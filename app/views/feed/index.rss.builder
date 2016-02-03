@@ -1,8 +1,7 @@
-xml.instruct! :xml, :version => "1.0" 
+xml.instruct! :xml, :version => "1.0"
 xml.rss("version" => "2.0", "xmlns:dc" => "http://purl.org/dc/elements/1.1/") do
   xml.channel do
-    xml.title "Potential User"
- 
+    xml.title "Potential User (#{@lang})"
     @feeds.each do |feed|
       xml.item do
         xml.title feed.title
