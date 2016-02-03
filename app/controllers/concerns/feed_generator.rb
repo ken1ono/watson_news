@@ -5,7 +5,6 @@ require 'nokogiri'
 module FeedGenerator
   class << self
     def build_yahoo_biz_rss
-      charset = nil
       query_set = [
         "北米進出",
         "北米展開",
@@ -43,11 +42,18 @@ module FeedGenerator
       parse_yahoo_html(html, charset)
     end
 
-    def build_english_news_rss()
-      []
+    def build_english_news_rss(html, charset)
+      QUERY_SET = [
+
+      ]
     end
 
     private
+
+    def parse_english_news_rss(html, charset)
+      feeds = []
+      doc = Nokogiri::HTML.parse(html, nil, charset)
+    end
 
     def parse_yahoo_html(html, charset)
       feeds = []
