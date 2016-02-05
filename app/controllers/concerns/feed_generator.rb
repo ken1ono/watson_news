@@ -22,30 +22,26 @@ module FeedGenerator
         "クラウドファンディング"
       ]
 
-      query_string = ""
-      query_set.each_with_index do |query, index|
-        query_string << query;
-        query_string << "+OR+" if index < (query_set.length - 1)
-      end
-
+      query_string = or_condition_builder(query_set);
       yahoo_biz_news_url =
         "http://newsbiz.yahoo.co.jp/search?p=#{URI.escape(query_string)}"+
         "&to=0&ca=ecny&ca=etp&ca=mkt&ca=g_int&ca=cn&ca=asa"+
         "&ca=eus&ind=agr&ind=cst&ind=fds&ind=egy&ind=chm&ind=med"
 
-      charset = nil
-      html = open(yahoo_biz_news_url) do |f|
-        charset = f.charset
-        f.read
-      end
-
+      html, charset = fetch_html(yahoo_biz_news_url)
       parse_yahoo_html(html, charset)
     end
 
-    def build_english_news_rss(html, charset)
-      QUERY_SET = [
-
+    def build_english_news_rss
+      query_set = [
+        "startup"
       ]
+
+      query_string = or_condition_builder(query_set)
+      business_insider_news_url = "http://www.businessinsider.com/s?q=#{query_string}"
+
+      html, charset = fetch_html(business_insider_news_url)
+      parse_english_news_rss(html, charset)
     end
 
     private
@@ -53,6 +49,8 @@ module FeedGenerator
     def parse_english_news_rss(html, charset)
       feeds = []
       doc = Nokogiri::HTML.parse(html, nil, charset)
+
+      feeds
     end
 
     def parse_yahoo_html(html, charset)
@@ -72,6 +70,24 @@ module FeedGenerator
       end
 
       feeds
+    end
+
+    def or_condition_builder(query_array)
+      query_string = ""
+      query_array.each_with_index do |query, index|
+        query_string << query;
+        query_string << "+OR+" if index < (query_array.length - 1)
+      end
+      query_string
+    end
+
+    def fetch_html(url)
+      charset = nil
+      html = open(url) do |f|
+        charset = f.charset
+        f.read
+      end
+     return  html, charset
     end
   end
 end
