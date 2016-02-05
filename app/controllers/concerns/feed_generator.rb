@@ -50,6 +50,10 @@ module FeedGenerator
       feeds = []
       doc = Nokogiri::HTML.parse(html, nil, charset)
 
+      #
+      # TODO: implement here
+      #
+
       feeds
     end
 
