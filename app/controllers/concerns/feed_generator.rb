@@ -53,12 +53,20 @@ module FeedGenerator
       doc.xpath('//div[@class="search-result"]').each_with_index do |result_item, index|
         title = result_item.xpath('//h3/a')[index]
         content = result_item.xpath('//div[@class="excerpt"]')[index]
+        date = result_item.xpath('//li[@class="river-post__date"]/span[@data-bi-format="date"]')[index].text
 
         feed = Feed.new
         feed.title = title.text
         feed.url = title.attr('href')
         feed.desc = content.text
-        feed.created_at = nil
+        feed.created_at =
+          if date.end_with?('m')
+            (Time.now - 60 * date.chop.to_i).to_datetime
+          elsif date.end_with?('h')
+            (Time.now - (60 ** 2 * date.chop.to_i)).to_datetime
+          else
+            DateTime.parse(date)
+          end
 
         feeds.push(feed)
       end
