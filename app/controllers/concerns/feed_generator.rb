@@ -37,7 +37,9 @@ module FeedGenerator
       ]
 
       query_string = or_condition_builder(query_set)
-      business_insider_news_url = "http://www.businessinsider.com/s?q=#{query_string}"
+      business_insider_news_url =
+        "http://www.businessinsider.com/s?q=#{query_string}"+
+        "&sort=date"
 
       parse_english_news_rss(business_insider_news_url)
     end
@@ -48,9 +50,18 @@ module FeedGenerator
       feeds = []
       doc = Nokogiri::HTML(open(target_url))
 
-      #
-      # TODO: implement here
-      #
+      doc.xpath('//div[@class="search-result"]').each_with_index do |result_item, index|
+        title = result_item.xpath('//h3/a')[index]
+        content = result_item.xpath('//div[@class="excerpt"]')[index]
+
+        feed = Feed.new
+        feed.title = title.text
+        feed.url = title.attr('href')
+        feed.desc = content.text
+        feed.created_at = nil
+
+        feeds.push(feed)
+      end
 
       feeds
     end
