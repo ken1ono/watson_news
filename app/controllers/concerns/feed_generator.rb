@@ -28,8 +28,7 @@ module FeedGenerator
         "&to=0&ca=ecny&ca=etp&ca=mkt&ca=g_int&ca=cn&ca=asa"+
         "&ca=eus&ind=agr&ind=cst&ind=fds&ind=egy&ind=chm&ind=med"
 
-      html, charset = fetch_html(yahoo_biz_news_url)
-      parse_yahoo_html(html, charset)
+      parse_yahoo_html(yahoo_biz_news_url)
     end
 
     def build_english_news_rss
@@ -38,28 +37,46 @@ module FeedGenerator
       ]
 
       query_string = or_condition_builder(query_set)
-      business_insider_news_url = "http://www.businessinsider.com/s?q=#{query_string}"
+      business_insider_news_url =
+        "http://www.businessinsider.com/s?q=#{query_string}"+
+        "&sort=date"
 
-      html, charset = fetch_html(business_insider_news_url)
-      parse_english_news_rss(html, charset)
+      parse_english_news_rss(business_insider_news_url)
     end
 
     private
 
-    def parse_english_news_rss(html, charset)
+    def parse_english_news_rss(target_url)
       feeds = []
-      doc = Nokogiri::HTML.parse(html, nil, charset)
+      doc = Nokogiri::HTML(open(target_url))
 
-      #
-      # TODO: implement here
-      #
+      doc.xpath('//div[@class="search-result"]').each_with_index do |result_item, index|
+        title = result_item.xpath('//h3/a')[index]
+        content = result_item.xpath('//div[@class="excerpt"]')[index]
+        date = result_item.xpath('//li[@class="river-post__date"]/span[@data-bi-format="date"]')[index].text
+
+        feed = Feed.new
+        feed.title = title.text
+        feed.url = title.attr('href')
+        feed.desc = content.text
+        feed.created_at =
+          if date.end_with?('m')
+            (Time.now - 60 * date.chop.to_i).to_datetime
+          elsif date.end_with?('h')
+            (Time.now - (60 ** 2 * date.chop.to_i)).to_datetime
+          else
+            DateTime.parse(date)
+          end
+
+        feeds.push(feed)
+      end
 
       feeds
     end
 
-    def parse_yahoo_html(html, charset)
+    def parse_yahoo_html(target_url)
       feeds = []
-      doc = Nokogiri::HTML.parse(html, nil, charset)
+      doc = Nokogiri::HTML(open(target_url))
 
       doc.xpath('//div[@class="newsListBody"]').each do |newsList|
         newsList.xpath('//dl[@class="srchBox"]').each_with_index do |box,count|
@@ -83,15 +100,6 @@ module FeedGenerator
         query_string << "+OR+" if index < (query_array.length - 1)
       end
       query_string
-    end
-
-    def fetch_html(url)
-      charset = nil
-      html = open(url) do |f|
-        charset = f.charset
-        f.read
-      end
-     return  html, charset
     end
   end
 end
