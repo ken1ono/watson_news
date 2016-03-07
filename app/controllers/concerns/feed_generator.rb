@@ -29,9 +29,8 @@ module FeedGenerator
       query_set = YAHOO_BIZ_RSS_QUERY_SET
       query_string = condition_builder(query_set, { with_or: true });
       yahoo_biz_news_url =
-        "http://newsbiz.yahoo.co.jp/search?p=#{URI.escape(query_string)}"+
-        "&to=0&ca=ecny&ca=etp&ca=mkt&ca=g_int&ca=cn&ca=asa"+
-        "&ca=eus&ind=agr&ind=cst&ind=fds&ind=egy&ind=chm&ind=med"
+        "http://news.search.yahoo.co.jp/search?p=#{URI.escape(query_string)}"+
+        "&vaop=a&to=0&st=&c_=dom&c_=c_int&c_=bus&c_=c_sci"
       parse_yahoo_html(yahoo_biz_news_url)
     end
 
