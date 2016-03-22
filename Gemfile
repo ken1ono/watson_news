@@ -3,12 +3,6 @@ source 'https://rubygems.org'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.2.1'
 
-# for heroku setting
-group :production do
-  gem 'pg'
-  gem 'rails_12factor'
-end
-
 gem 'nokogiri'
 
 # Use SCSS for stylesheets
@@ -30,16 +24,22 @@ gem 'jbuilder', '~> 2.0'
 # gem 'capistrano-rails', group: :development
 
 group :development, :test do
-  # Database for local
   gem 'sqlite3'
 
-  # Call 'byebug' anywhere in the code to stop execution and get a debugger console
-  gem 'byebug'
+  gem 'hirb'
+  gem 'hirb-unicode'
 
-  # Access an IRB console on exception pages or by using <%= console %> in views
+  gem 'pry-rails'
+  gem 'pry-byebug'
+  gem 'pry-coolline'
+
   gem 'web-console', '~> 2.0'
-
-  # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'spring'
+end
+
+# for heroku setting
+group :production do
+  gem 'pg'
+  gem 'rails_12factor'
 end
 
