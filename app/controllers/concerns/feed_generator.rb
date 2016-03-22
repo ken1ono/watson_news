@@ -30,7 +30,7 @@ module FeedGenerator
       query_string = condition_builder(query_set, { with_or: false });
       yahoo_biz_news_url =
         "http://news.search.yahoo.co.jp/search?p=#{URI.escape(query_string)}"+
-        "&vaop=o&to=0&st=&c_=dom&c_=bus&c_=c_sci"
+        "&vaop=o&to=0&st=&c_=bus&c_=c_sci"
       puts yahoo_biz_news_url
       parse_yahoo_html(yahoo_biz_news_url)
     end
