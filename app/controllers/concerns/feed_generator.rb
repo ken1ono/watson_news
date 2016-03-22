@@ -70,8 +70,7 @@ module FeedGenerator
         feed.url = article.css("a").attribute("href")
         feed.desc = article.css("div.txt p.a").text
         posted_time = article.css("div.txt p span.d").text
-        yahoo_article_date_parser(posted_time)
-        feed.created_at = posted_time
+        feed.created_at = yahoo_article_date_parser(posted_time).to_s
         feeds.push(feed)
       end
 
@@ -83,16 +82,17 @@ module FeedGenerator
       day_sign_index = datetext.index("日")
       hour_sign_index = datetext.index("時")
       minute_sign_index = datetext.index("分")
-      weekday_brace_begin = datetext.index("（")
+      # weekday_brace_begin = datetext.index("（")
       weekday_brace_end = datetext.index("）")
 
       month = datetext[0...month_sign_index].to_i
       day = datetext[(month_sign_index + 1)...day_sign_index].to_i
-      weekday = datetext[(weekday_brace_begin + 1)...weekday_brace_end]
+      # weekday = datetext[(weekday_brace_begin + 1)...weekday_brace_end]
       hour = datetext[(weekday_brace_end + 2)...hour_sign_index].to_i
       minute = datetext[(hour_sign_index + 1)...minute_sign_index].to_i
+      year = Time.now.year # News must be always hot!
 
-      # Build datetime here
+      DateTime.new(year, month, day, hour, minute);
     end
 
     #
