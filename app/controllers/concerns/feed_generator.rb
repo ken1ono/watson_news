@@ -27,10 +27,10 @@ module FeedGenerator
 
     def build_yahoo_biz_rss
       query_set = YAHOO_BIZ_RSS_QUERY_SET
-      query_string = condition_builder(query_set, { with_or: true });
+      query_string = condition_builder(query_set, { with_or: false });
       yahoo_biz_news_url =
         "http://news.search.yahoo.co.jp/search?p=#{URI.escape(query_string)}"+
-        "&vaop=a&to=0&st=&c_=dom&c_=c_int&c_=bus&c_=c_sci"
+        "&vaop=o&to=0&st=&c_=dom&c_=c_int&c_=bus&c_=c_sci"
       parse_yahoo_html(yahoo_biz_news_url)
     end
 
@@ -64,16 +64,14 @@ module FeedGenerator
       feeds = []
       doc = Nokogiri::HTML(open(target_url))
 
-      doc.xpath('//div[@class="newsListBody"]').each do |newsList|
-        newsList.xpath('//dl[@class="srchBox"]').each_with_index do |box, count|
-          feed = Feed.new
-          feed.title = box.xpath('//dt//p//a')[count].text
-          feed.url = box.xpath('//dt//p//a')[count].attr('href')
-          feed.desc = box.xpath('//dd[@class="listDetail"]/p')[count].text
-          time = box.xpath('//dd[@class="newsSupple"]/span')[count].text
-          feed.created_at = DateTime.parse(time)
-          feeds.push(feed)
-        end
+      doc.css("div.l.cf").each do |article|
+        feed = Feed.new
+        feed.title = article.css("h2.t a").text
+        feed.url = article.css("a").attribute("href")
+        feed.desc = article.css("div.txt p.a").text
+        posted_time = article.css("div.txt p span.d").text
+        feed.created_at = posted_time
+        feeds.push(feed)
       end
 
       feeds
