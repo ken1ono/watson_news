@@ -27,11 +27,11 @@ module FeedGenerator
 
     def build_yahoo_biz_rss
       query_set = YAHOO_BIZ_RSS_QUERY_SET
-      query_string = condition_builder(query_set, { with_or: true });
+      query_string = condition_builder(query_set, { with_or: false });
       yahoo_biz_news_url =
-        "http://newsbiz.yahoo.co.jp/search?p=#{URI.escape(query_string)}"+
-        "&to=0&ca=ecny&ca=etp&ca=mkt&ca=g_int&ca=cn&ca=asa"+
-        "&ca=eus&ind=agr&ind=cst&ind=fds&ind=egy&ind=chm&ind=med"
+        "http://news.search.yahoo.co.jp/search?p=#{URI.escape(query_string)}"+
+        "&vaop=o&to=0&st=&c_=dom&c_=bus&c_=c_sci"
+      puts yahoo_biz_news_url
       parse_yahoo_html(yahoo_biz_news_url)
     end
 
@@ -65,19 +65,35 @@ module FeedGenerator
       feeds = []
       doc = Nokogiri::HTML(open(target_url))
 
-      doc.xpath('//div[@class="newsListBody"]').each do |newsList|
-        newsList.xpath('//dl[@class="srchBox"]').each_with_index do |box, count|
-          feed = Feed.new
-          feed.title = box.xpath('//dt//p//a')[count].text
-          feed.url = box.xpath('//dt//p//a')[count].attr('href')
-          feed.desc = box.xpath('//dd[@class="listDetail"]/p')[count].text
-          time = box.xpath('//dd[@class="newsSupple"]/span')[count].text
-          feed.created_at = DateTime.parse(time)
-          feeds.push(feed)
-        end
+      doc.css("div.l.cf").each do |article|
+        feed = Feed.new
+        feed.title = article.css("h2.t a").text
+        feed.url = article.css("a").attribute("href")
+        feed.desc = article.css("div.txt p.a").text
+        posted_time = article.css("div.txt p span.d").text
+        feed.created_at = yahoo_article_date_parser(posted_time).to_s
+        feeds.push(feed)
       end
 
       feeds
+    end
+
+    def yahoo_article_date_parser(datetext)
+      month_sign_index = datetext.index("月")
+      day_sign_index = datetext.index("日")
+      hour_sign_index = datetext.index("時")
+      minute_sign_index = datetext.index("分")
+      # weekday_brace_begin = datetext.index("（")
+      weekday_brace_end = datetext.index("）")
+
+      month = datetext[0...month_sign_index].to_i
+      day = datetext[(month_sign_index + 1)...day_sign_index].to_i
+      # weekday = datetext[(weekday_brace_begin + 1)...weekday_brace_end]
+      hour = datetext[(weekday_brace_end + 2)...hour_sign_index].to_i
+      minute = datetext[(hour_sign_index + 1)...minute_sign_index].to_i
+      year = Time.now.year # News must be always hot!
+
+      DateTime.new(year, month, day, hour, minute);
     end
 
     #
