@@ -5,20 +5,7 @@ require 'nokogiri'
 module FeedGenerator
   class << self
     YAHOO_BIZ_RSS_QUERY_SET = [
-      "北米進出",
-      "北米展開",
-      "アメリカ進出",
-      "米国展開",
-      "米国進出",
-      "US進出",
-      "海外展開",
-      "海外進出",
-      "シリコンバレー",
-      "イノベーション",
-      "ベイエリア",
-      "btrax",
-      "ビートラックス",
-      "クラウドファンディング"
+      "エグゼクティブ"
     ]
 
     TECH_IN_ASIA_RSS_QUERY_SET = [
