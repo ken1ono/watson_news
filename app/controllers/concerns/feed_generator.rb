@@ -9,7 +9,6 @@ module FeedGenerator
       "睡眠",
       "ランニング",
       "体力作り"
-  
     ]
 
     TECH_IN_ASIA_RSS_QUERY_SET = [
