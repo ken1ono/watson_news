@@ -7,8 +7,8 @@ module FeedGenerator
     YAHOO_BIZ_RSS_QUERY_SET = [
       "ライフハック",
       "睡眠",
-      "ランニング",
-      "体力作り"
+      "マラソン",
+      "勉強法"
     ]
 
     TECH_IN_ASIA_RSS_QUERY_SET = [
