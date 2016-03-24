@@ -5,7 +5,11 @@ require 'nokogiri'
 module FeedGenerator
   class << self
     YAHOO_BIZ_RSS_QUERY_SET = [
-      "エグゼクティブ"
+      "ライフハック",
+      "睡眠",
+      "ランニング",
+      "体力作り"
+  
     ]
 
     TECH_IN_ASIA_RSS_QUERY_SET = [
